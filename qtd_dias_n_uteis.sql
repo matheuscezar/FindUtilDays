@@ -1,5 +1,5 @@
 DELIMITER //
-CREATE FUNCTION qtd_dias_n_uteis (data_inicial DATE, data_final DATE, empresaID INT) RETURNS INT
+CREATE OR REPLACE FUNCTION qtd_dias_n_uteis (data_inicial DATE, data_final DATE, empresaID INT) RETURNS INT
 BEGIN
 DECLARE qtd_feriado INT DEFAULT 0;
 DECLARE data_range DATE;
@@ -9,6 +9,9 @@ WHILE data_range<=data_final DO
 		IF(WEEKDAY(data_range) NOT IN (5,6)) THEN #verifica se o feriado é no fds
 			SET qtd_feriado = qtd_feriado + 1; 
 		END IF;	
+	END IF;
+	IF(weekday(data_range)IN(5,6)) THEN # finais de semana também contam como feriado
+		SET qtd_feriado = qtd_feriado + 1;
 	END IF;
 	SELECT DATE_ADD(data_range, INTERVAL 1 DAY) INTO data_range;
 END WHILE;
